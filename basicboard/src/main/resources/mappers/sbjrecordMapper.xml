@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inhatc.mapper.sbjrecordMapper"> <!--요 녀석이 이름. 자바 딴에서 요놈 호출하면 된당.. -->
+	
+	<insert id="insertStudents">
+		insert into tbl_sbjrecord (stuID, kor, eng, mat) values
+		(#{stuID}, #{kor}, #{eng}, #{mat})
+	</insert>
+	
+	<select id="readStudents" resultType="com.inhatc.domain.SubjectRecordVO">
+		select * from tbl_sbjrecord
+		where stuID = #{stuID}
+	</select>
+	
+	<update id="updateStudents">
+		update tbl_sbjrecord set kor = #{kor}
+		where stuID = #{stuID}
+	</update>
+	
+	<delete id="deleteStudents">
+		delete from tbl_sbjrecord where stuID = #{stuID}
+	</delete>
+	
+	<select id="listAll" resultType="com.inhatc.domain.SubjectRecordVO">
+		<![CDATA[
+		select stuID, kor, eng, mat from tbl_sbjrecord
+		order by stuID asc ]]>
+	</select>
+</mapper> 
