@@ -18,7 +18,7 @@ public class MembersDAOimpl implements MembersDAO {
 	private SqlSession sqlSession;
 	
 	// mapper이름 정의 먼저 해 주기
-	private static final String namespace = "com.inhatc.mapper.sbjrecordMapper";
+	private static final String namespace = "com.inhatc.mapper.MembersMapper";
 
 	@Override
 	public void insertMember(MembersVO vo) {
