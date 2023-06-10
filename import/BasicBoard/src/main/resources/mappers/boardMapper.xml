@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inhatc.mapper.BoardMapper">
+	<insert id = "create">
+		insert into tbl_board (title, content, writer)
+		values(#{title}, #{content}, #{writer})
+	</insert>
+	
+	<select id = "read" resultType="com.inhatc.domain.BoardVO">
+		select bno, title, content, writer, regdate, viewcnt
+		from tbl_board
+		where bno = #{bno}
+	</select>
+	
+	<update id = "update">
+		update tbl_board set title=#{title}, content=#{content}
+		where bno = #{bno}
+	</update>
+	
+	<delete id = "delete">
+		delete from tbl_board where bno = #{bno}
+	</delete>
+	
+	<select id="listAll" resultType ="com.inhatc.domain.BoardVO">
+		<![CDATA[
+		select bno, title, content, writer, regdate, viewcnt
+		from tbl_board
+		where bno > 0
+		order by bno desc, regdate desc]]>
+	</select>
+	
+	<select id="listPage" resultType ="com.inhatc.domain.BoardVO">
+		<![CDATA[
+		select bno, title, content, writer, regdate, viewcnt
+		from tbl_board
+		where bno > 0
+		order by bno desc, regdate desc
+		limit #{page}, 10]]>  <!--  #{page} : Index라고 생각하자 -->
+	</select>
+	
+	<select id="listCriteria" resultType ="com.inhatc.domain.BoardVO">
+		<![CDATA[
+		select bno, title, content, writer, regdate, viewcnt
+		from tbl_board
+		where bno > 0
+		order by bno desc, regdate desc
+		limit #{pageStart}, #{perPageNum}
+		]]>  <!--  #{page} : Index라고 생각하자 -->
+	</select>
+	
+
+ 	<select id="countPaging" resultType="int">
+ 		<![CDATA[
+ 		select 
+   		count(bno) 
+ 		from 
+   		tbl_board 
+ 		where 
+   		bno > 0 
+ 		]]>
+ 	</select>
+ 	
+ 	<sql id="search"> <!--  search 라는 sql의 id -->
+ 		<if test="searchType != null" >    <!-- 검색 유형을 선택하지 않았으면 null -->
+   			<if test="searchType == 't'.toString()"> <!--  제목으로 검색했을 경우 -->
+     			and title like CONCAT('%', #{keyword}, '%') 
+   			</if>
+   			<if test="searchType == 'c'.toString()"> <!--  내용으로 검색했을 경우 -->
+     			and content like CONCAT('%', #{keyword}, '%')
+   			</if>
+   			<if test="searchType == 'w'.toString()"> <!--  글쓴이로 검색했을 경우 -->
+     			and writer like CONCAT('%', #{keyword}, '%')
+   			</if>     
+   			<if test="searchType == 'tc'.toString()"> <!--  제목+내용으로 검색했을 경우 -->
+     			and ( title like CONCAT('%', #{keyword}, '%') OR content like CONCAT('%', #{keyword}, '%'))
+   			</if>        
+   			<if test="searchType == 'cw'.toString()"> <!--  내용_+글쓴이로 검색했을 경우 -->
+     			and ( content like CONCAT('%', #{keyword}, '%') OR writer like CONCAT('%', #{keyword}, '%'))
+   			</if>        
+   			<if test="searchType == 'tcw'.toString()"> <!--  제목+내용+글쓴이로 검색했을 경우 -->
+     			and (   title like CONCAT('%', #{keyword}, '%') 
+           		OR 
+            	content like CONCAT('%', #{keyword}, '%') <!--  CONCAT: 각 문자열을 이어주는 녀석 -->
+           		OR 
+             	writer like CONCAT('%', #{keyword}, '%'))
+   			</if>              
+ 		</if>  
+	</sql>
+
+ 
+	<select id="listSearch" resultType="BoardVO">
+		<![CDATA[  
+  		select * 
+  		from tbl_board 
+  		where bno > 0 
+		]]>  
+
+  <include refid="search"></include>  <!--  reference ID 아이디 참조: search ID를가진 놈 include -->
+  
+		<![CDATA[    
+  		order by bno desc
+  		limit #{pageStart}, #{perPageNum}
+		]]>  
+	</select>
+  
+	<select id="listSearchCount" resultType="int">
+		<![CDATA[  
+  		select count(bno) 
+  		from tbl_board 
+  		where bno > 0 
+		]]>
+  		<include refid="search"></include>
+	</select>  
+ 	
+</mapper>
